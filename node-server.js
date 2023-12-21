@@ -1,69 +1,72 @@
-const readline = require('readline');
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 let tasks = [];
 
-function printTasks() {
-  console.log('\nLista de tareas:');
-  tasks.forEach((task, index) => {
-    const status = task.completed ? 'Completada' : 'No completada';
-    console.log(`${index + 1}. [${status}] ${task.description}`);
-  });
-}
+function mostrarTareas() {
+  console.log(tasks);
+  };
+
 
 function addTask(description) {
+ return new Promise((resolve,reject)=>{
   const task = {
     id: tasks.length + 1,
-    description,
-    completed: false
+    description:description,
+    completed:false
+
   };
   tasks.push(task);
   console.log(`Tarea añadida: [No completada] ${description}`);
+  resolve(task)
+ })
 }
 
 function deleteTask(index) {
-  if (index >= 0 && index < tasks.length) {
-    const deletedTask = tasks.splice(index, 1);
-    console.log(`Tarea eliminada: [${deletedTask[0].completed ? 'Completada' : 'No completada'}] ${deletedTask[0].description}`);
-  } else {
-    console.log('Índice inválido. La tarea no se pudo eliminar.');
-  }
+  return new Promise ((resolve,reject)=>{
+    if (index >= 0 && index < tasks.length) {
+      const deletedTask = tasks.splice(index, 1);
+      console.log(`Tarea eliminada: [${deletedTask[0].completed ? 'Completada' : 'No completada'}] ${deletedTask[0].description}`);
+      resolve(deletedtask)
+    } else {
+      console.log('Índice inválido. La tarea no se pudo eliminar.');
+      reject("tarea no encontrada")
+
+    }
+  })
 }
 
 function completeTask(index) {
+ return new Promise((resolve,reject)=>{
   if (index >= 0 && index < tasks.length) {
     tasks[index].completed = true;
     console.log(`Tarea completada: [Completada] ${tasks[index].description}`);
+    resolve(completedtask)
   } else {
     console.log('Índice inválido. La tarea no se pudo completar.');
+    reject("tarea no completada")
   }
+ })
 }
 
-rl.question('¡Bienvenido al administrador de tareas! \nElija una opción:\n1. Añadir tarea\n2. Eliminar tarea\n3. Completar tarea\n', (option) => {
-  if (option === '1') {
-    rl.question('Ingrese la descripción de la tarea: ', (description) => {
-      addTask(description);
-      printTasks();
-      rl.close();
-    });
-  } else if (option === '2') {
-    rl.question('Ingrese el índice de la tarea a eliminar: ', (index) => {
-      deleteTask(index - 1);
-      printTasks();
-      rl.close();
-    });
-  } else if (option === '3') {
-    rl.question('Ingrese el índice de la tarea a completar: ', (index) => {
-      completeTask(index - 1);
-      printTasks();
-      rl.close();
-    });
-  } else {
-    console.log('Opción inválida. Por favor, elija una opción válida.');
-    rl.close();
-  }
-});
+completeTask("1")
+  .then(resultado => {
+    console.log('Tarea completada:', resultado);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+async function comandos(){
+  await addTask("Sacar al perro");
+    await addTask("Pagar la luz");
+    await addTask("bailar mucho");
+    mostrarTareas();
+  
+    try {    
+      await deleteTask("2");
+      mostrarTareas();
+    } catch (error) {
+      console.error(error);
+    }
+}
+  comandos();
